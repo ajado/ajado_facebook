@@ -1,0 +1,52 @@
+a:5:{s:4:"save";a:3:{s:13:"extension_key";s:14:"ajado_facebook";s:18:"print_wop_comments";s:1:"0";s:15:"overwrite_files";a:15:{s:9:"ChangeLog";s:1:"0";s:10:"README.txt";s:1:"0";s:12:"ext_icon.gif";s:1:"0";s:17:"ext_localconf.php";s:1:"0";s:14:"ext_tables.php";s:1:"0";s:14:"ext_tables.sql";s:1:"0";s:16:"locallang_db.xml";s:1:"0";s:19:"doc/wizard_form.dat";s:1:"1";s:20:"doc/wizard_form.html";s:1:"1";s:34:"pi1/class.tx_ajadofacebook_pi1.php";s:1:"0";s:17:"pi1/locallang.xml";s:1:"0";s:43:"static/ajado_facebook_connect/constants.txt";s:1:"1";s:39:"static/ajado_facebook_connect/setup.txt";s:1:"1";s:37:"static/facebook_connect/constants.txt";s:1:"1";s:33:"static/facebook_connect/setup.txt";s:1:"1";}}s:6:"emconf";a:1:{i:1;a:7:{s:5:"title";s:22:"Ajado Facebook Connect";s:11:"description";s:30:"Facebook Connect via OAuth 2.0";s:8:"category";s:6:"plugin";s:5:"state";s:4:"beta";s:12:"dependencies";s:3:"cms";s:6:"author";s:12:"Matteo Savio";s:12:"author_email";s:16:"msavio@ajado.com";}}s:6:"fields";a:2:{i:1;a:3:{s:11:"which_table";s:8:"fe_users";s:5:"title";s:25:"fe_users (Frontend Users)";s:6:"fields";a:4:{i:1;a:9:{s:9:"fieldname";s:2:"id";s:5:"title";s:11:"Facebook ID";s:4:"type";s:5:"input";s:12:"excludeField";s:1:"0";s:7:"_DELETE";s:1:"0";s:9:"conf_size";s:0:"";s:8:"conf_max";s:0:"";s:13:"conf_required";s:1:"0";s:12:"conf_varchar";s:1:"0";}i:4;a:5:{s:9:"fieldname";s:4:"link";s:5:"title";s:18:"Facebook User Link";s:4:"type";s:4:"link";s:12:"excludeField";s:1:"0";s:7:"_DELETE";s:1:"0";}i:5;a:9:{s:9:"fieldname";s:6:"gender";s:5:"title";s:15:"Facebook Gender";s:4:"type";s:5:"input";s:12:"excludeField";s:1:"0";s:7:"_DELETE";s:1:"0";s:9:"conf_size";s:0:"";s:8:"conf_max";s:0:"";s:13:"conf_required";s:1:"0";s:12:"conf_varchar";s:1:"0";}i:6;a:9:{s:9:"fieldname";s:5:"email";s:5:"title";s:15:"Facebook E-Mail";s:4:"type";s:5:"input";s:12:"excludeField";s:1:"0";s:7:"_DELETE";s:1:"0";s:9:"conf_size";s:0:"";s:8:"conf_max";s:0:"";s:13:"conf_required";s:1:"0";s:12:"conf_varchar";s:1:"0";}}}i:2;a:3:{s:11:"which_table";s:14:"backend_layout";s:5:"title";s:31:"backend_layout (Backend Layout)";s:6:"fields";a:0:{}}}s:2:"pi";a:1:{i:1;a:8:{s:5:"title";s:14:"Facebook login";s:13:"plus_user_obj";s:1:"1";s:23:"plus_not_staticTemplate";s:1:"0";s:7:"addType";s:9:"list_type";s:8:"plus_wiz";s:1:"0";s:20:"plus_wiz_description";s:0:"";s:8:"tag_name";s:0:"";s:12:"plus_user_ex";s:1:"0";}}s:2:"ts";a:1:{i:1;a:3:{s:5:"title";s:16:"Facebook Connect";s:9:"constants";s:2049:"plugin.tx_ajadofacebook_pi1 {
+
+    # cat=ajado_facebook//10; type=string; label=Facebook app id:The app id of your Facebook application
+    appId =
+
+    # cat=ajado_facebook//11; type=string; label=Facebook secret:The application secret of your Facebook application
+    secret =
+
+    # cat=ajado_facebook//12; type=int+; label=User storage page:uid of the page where Frontend user records are stored
+    usersPid =
+
+    # cat=ajado_facebook//13; type=int+; label=Redirect after login page:uid of the page where the user will get redirected after login
+    redirectAfterLoginPid = 
+	
+    # cat=ajado_facebook//14; type=int+; label=Redirect after logout page:uid of the page where the user will get redirected after logout
+    redirectAfterLogoutPid = 
+
+    # cat=ajado_facebook//13; type=int+; label=User group id(s):uid (comma separated if multiple) of the group(s) the frontend user will belong to
+    userGroup =
+
+    # cat=ajado_facebook//14; type=boolean; label= Ask and save e-mail
+    askForEmail=0
+
+    # cat=ajado_facebook//14; type=string; label=Facebook language:The Facebook application language (e.g. en_US, de_DE)
+    #facebookLanguage = en_US
+
+    # cat=ajado_facebook//20; type=string; label=Facebook account fields for permissions:Comma separated Facebook fields to be fetched (use field names that are needed for permissions)
+    #facebookFields4Perms = id,name,first_name,last_name,link,gender
+
+    # cat=ajado_facebook//21; type=string; label=Facebook account fields for fetch:Comma separated Facebook fields to be fetched (use field names that are used in Facebooks user object), usually equal to facebookFields4Perms
+    #facebookFields4Fetch = id,name,first_name,last_name,link,gender
+
+    # cat=ajado_facebook//22; type=string; label=TYPO3 fe_users fields:Comma separated fe_users fields where Facebook fields are stored (positions correspond to facebookFields)
+    #fe_usersFields = username,name,tx_facebook2t3_first_name,tx_facebook2t3_last_name,tx_facebook2t3_link,tx_facebook2t3_gender
+}";s:5:"setup";s:1004:"plugin.tx_ajadofacebook_pi1 = USER_INT
+plugin.tx_ajadofacebook_pi1 {
+    appId = {$plugin.tx_ajadofacebook_pi1.appId}
+    secret = {$plugin.tx_ajadofacebook_pi1.secret}
+    usersPid = {$plugin.tx_ajadofacebook_pi1.usersPid}
+    userGroup = {$plugin.tx_ajadofacebook_pi1.userGroup}
+    askForEmail = {$plugin.tx_ajadofacebook_pi1.askForEmail}
+	#???channelUrl = {$plugin.tx_ajadofacebook_pi1.channelUrl}
+	#???facebookLanguage = {$plugin.tx_ajadofacebook_pi1.facebookLanguage}
+	#???facebookFields4Perms = {$plugin.tx_ajadofacebook_pi1.facebookFields4Perms}
+	#???facebookFields4Fetch = {$plugin.tx_ajadofacebook_pi1.facebookFields4Fetch}
+	#???fe_usersFields = {$plugin.tx_ajadofacebook_pi1.fe_usersFields}
+	redirectAfterLoginPid = {$plugin.tx_ajadofacebook_pi1.redirectAfterLoginPid}
+	redirectAfterLogoutPid = {$plugin.tx_ajadofacebook_pi1.redirectAfterLogoutPid}
+}
+
+# Include Facebook xmlns in html-tag
+config.htmlTag_setParams := appendString( xmlns:fb="http://www.facebook.com/2008/fbml")";}}}

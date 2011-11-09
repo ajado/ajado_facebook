@@ -1,0 +1,29 @@
+plugin.tx_ajadofacebook_pi1 = USER_INT
+plugin.tx_ajadofacebook_pi1 {
+    appId = {$plugin.tx_ajadofacebook_pi1.appId}
+    secret = {$plugin.tx_ajadofacebook_pi1.secret}
+    usersPid = {$plugin.tx_ajadofacebook_pi1.usersPid}
+    userGroup = {$plugin.tx_ajadofacebook_pi1.userGroup}
+    askForEmail = {$plugin.tx_ajadofacebook_pi1.askForEmail}
+	#???channelUrl = {$plugin.tx_ajadofacebook_pi1.channelUrl}
+	#???facebookLanguage = {$plugin.tx_ajadofacebook_pi1.facebookLanguage}
+	#???facebookFields4Perms = {$plugin.tx_ajadofacebook_pi1.facebookFields4Perms}
+	#???facebookFields4Fetch = {$plugin.tx_ajadofacebook_pi1.facebookFields4Fetch}
+	#???fe_usersFields = {$plugin.tx_ajadofacebook_pi1.fe_usersFields}
+	redirectAfterLoginPid = {$plugin.tx_ajadofacebook_pi1.redirectAfterLoginPid}
+	redirectAfterLogoutPid = {$plugin.tx_ajadofacebook_pi1.redirectAfterLogoutPid}
+	facebookLanguage = {$plugin.tx_ajadofacebook_pi1.facebookLanguage}
+	
+	makeSessionPermanent=0
+	
+	loginButton=HTML
+	loginButton.value=<a href="javascript:fbLogin();" class="fb_button fb_button_medium"><span class="fb_button_text">Anmelden</span></a>
+    
+    logoutButton=HTML
+    logoutButton.value=<a href="javascript:fbLogout();" class="fb_button fb_button_medium"><span class="fb_button_text">Logout</span></a>
+}
+
+# Include Facebook xmlns in html-tag
+config.htmlTag_setParams := appendString( xmlns:fb="http://www.facebook.com/2008/fbml")
+
+ 
