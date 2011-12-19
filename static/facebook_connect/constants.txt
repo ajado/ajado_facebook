@@ -1,5 +1,4 @@
 plugin.tx_ajadofacebook_pi1 {
-
     # cat=ajado_facebook//10; type=string; label=Facebook app id:The app id of your Facebook application
     appId =
 
@@ -21,18 +20,6 @@ plugin.tx_ajadofacebook_pi1 {
     # cat=ajado_facebook//14; type=boolean; label= Ask and save e-mail
     askForEmail=0
 
-    # cat=ajado_facebook//14; type=string; label=Facebook language:The Facebook application language (e.g. en_US, de_DE)
-    #facebookLanguage = en_US
-
-    # cat=ajado_facebook//20; type=string; label=Facebook account fields for permissions:Comma separated Facebook fields to be fetched (use field names that are needed for permissions)
-    #facebookFields4Perms = id,name,first_name,last_name,link,gender
-
-    # cat=ajado_facebook//21; type=string; label=Facebook account fields for fetch:Comma separated Facebook fields to be fetched (use field names that are used in Facebooks user object), usually equal to facebookFields4Perms
-    #facebookFields4Fetch = id,name,first_name,last_name,link,gender
-
-    # cat=ajado_facebook//22; type=string; label=TYPO3 fe_users fields:Comma separated fe_users fields where Facebook fields are stored (positions correspond to facebookFields)
-    #fe_usersFields = username,name,tx_facebook2t3_first_name,tx_facebook2t3_last_name,tx_facebook2t3_link,tx_facebook2t3_gender
-    
     # cat=ajado_facebook//23; type=string; label=Facebook language
     facebookLanguage=en_US
 }
