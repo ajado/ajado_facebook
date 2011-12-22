@@ -273,13 +273,31 @@ FACEBOOKJSSDK;
         }
         else {
         	$fe_usersValues['tx_ajadofacebook_id'] = $facebookUserProfile['id'];
-			//$this->fe_usersValues['image'] = $this->copyImageFromFacebook($this->facebookUserId);
+        	if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
+				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
+        	}
 			$fe_usersValues['usergroup'] = $this->conf['userGroup'];
             $fe_usersValues['password'] = md5($facebookUserProfile['name'] . time());
             $fe_usersValues['crdate'] = time();
             $TYPO3_DB->exec_INSERTquery($this->tableName, $fe_usersValues);
         }
     }
+    
+	private function copyImageFromFacebook($facebookUserId){
+		// e.g. http://graph.facebook.com/1666900615/picture&type=large
+		$this->conf['imageDir'] = 'uploads/tx_srfeuserregister';
+		$imageUrl = "http://graph.facebook.com/$facebookUserId/picture&type=large";
+		$fileName = $facebookUserId.'.jpg';
+		$ch = curl_init($imageUrl);
+		$fp = fopen(PATH_site.$this->conf['imageDir'].'/'.$fileName, 'wb');
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+		return $fileName;
+	}
     
     /**
      * Check prerequisites and exit with statement if not met
