@@ -268,7 +268,14 @@ FACEBOOKJSSDK;
 				// if updating usergroup: don't overwrite it since another extension could set it???
 				//if(!$user['usergroup']){ // only override if user is not already in some group, could be set from another extension
 				//$this->fe_usersValues['usergroup'] = $this->conf['userGroup'];
-				
+			
+			/*
+			 * TODO: Zeitintervall, wann upgedatet wird (bzw. nur dann updaten wenn der Facebook-User upgedatet wurde)
+			 */
+        	if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
+				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
+        	}
+        	
 			$TYPO3_DB->exec_UPDATEquery($this->tableName, $where, $fe_usersValues);
         }
         else {
