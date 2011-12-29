@@ -55,16 +55,6 @@ t3lib_div::loadTCA('fe_users');
 t3lib_extMgm::addTCAcolumns('fe_users',$tempColumns,1);
 t3lib_extMgm::addToAllTCAtypes('fe_users','tx_ajadofacebook_id;;;;1-1-1, tx_ajadofacebook_link, tx_ajadofacebook_gender, tx_ajadofacebook_email');
 
-$tempColumns = array (
-	
-);
-
-
-t3lib_div::loadTCA('backend_layout');
-t3lib_extMgm::addTCAcolumns('backend_layout',$tempColumns,1);
-t3lib_extMgm::addToAllTCAtypes('backend_layout','');
-
-
 t3lib_div::loadTCA('tt_content');
 $TCA['tt_content']['types']['list']['subtypes_excludelist'][$_EXTKEY.'_pi1']='layout,select_key';
 

@@ -76,7 +76,7 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		if(($this->piVars['fbLogin'] == "1") && $user) {
 			try {
 				$facebookUserProfile = $facebook->api('/me');
-				// todo was ist wenn ich es nicht zurŸck bekomme?
+				// todo was ist wenn ich es nicht zurÅ¸ck bekomme?
 				$this->storeUser($facebookUserProfile);
 				$this->loginUser($user);
 			} catch (FacebookApiException $e) {
@@ -84,7 +84,7 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 			  	$user = null;
 			}
 		}
-		// || (!$user)
+		// ||Â (!$user)
 		if($this->piVars['fbLogout'] == "1") {
 			$GLOBALS['TSFE']->fe_user->logoff();
             setcookie("fe_typo_user", "", time() - 3600, "/", $_SERVER["HTTP_HOST"]);
@@ -201,7 +201,6 @@ FACEBOOKJSSDK;
             $GLOBALS["TSFE"]->loginUser = 1;
             $GLOBALS["TSFE"]->initUserGroups(); // this is needed in case the redirection is to a restricted page.
             
-            
 			if(isset($this->conf['redirectAfterLoginPid'])){
 				$redirectAfterLoginUrl = $this->pi_getPageLink($this->conf['redirectAfterLoginPid']);
 				header('Location: '.$redirectAfterLoginUrl);
@@ -284,7 +283,7 @@ FACEBOOKJSSDK;
 				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
         	}
 			$fe_usersValues['usergroup'] = $this->conf['userGroup'];
-            $fe_usersValues['password'] = md5($facebookUserProfile['name'] . time());
+            $fe_usersValues['password'] = t3lib_div::getRandomHexString();
             $fe_usersValues['crdate'] = time();
             $TYPO3_DB->exec_INSERTquery($this->tableName, $fe_usersValues);
         }

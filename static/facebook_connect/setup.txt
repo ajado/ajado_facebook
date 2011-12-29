@@ -1,5 +1,10 @@
 plugin.tx_ajadofacebook_pi1 = USER_INT
 plugin.tx_ajadofacebook_pi1 {
+	_CSS_DEFAULT_STYLE (
+	  .tx-ajadofacebook-pi1 {
+	    margin: 10px 0px;
+	  }
+	)
     appId = {$plugin.tx_ajadofacebook_pi1.appId}
     secret = {$plugin.tx_ajadofacebook_pi1.secret}
     usersPid = {$plugin.tx_ajadofacebook_pi1.usersPid}
