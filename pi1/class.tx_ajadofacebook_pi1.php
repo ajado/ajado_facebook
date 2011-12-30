@@ -247,6 +247,9 @@ FACEBOOKJSSDK;
         
         if(isset($facebookUserProfile['locale'])) {
             $fe_usersValues['tx_ajadofacebook_locale'] = $facebookUserProfile['locale'];
+            /*
+             * TODO: if language field present save language out of locale
+             */
         }
         
         if(isset($facebookUserProfile['gender'])) {
