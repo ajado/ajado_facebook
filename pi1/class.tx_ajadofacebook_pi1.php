@@ -48,11 +48,11 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
    * List of query parameters that get automatically dropped when rebuilding
    * the current URL.
    */
-  protected static $DROP_QUERY_PARAMS = array(
+  /*protected static $DROP_QUERY_PARAMS = array(
     'code',
     'state',
     'signed_request',
-  );
+  );*/
 	/**
 	 * The main method of the PlugIn
 	 *
@@ -76,7 +76,7 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		if(($this->piVars['fbLogin'] == "1") && $user) {
 			try {
 				$facebookUserProfile = $facebook->api('/me');
-				// todo was ist wenn ich es nicht zurŸck bekomme?
+				// todo was ist wenn ich es nicht zurück bekomme?
 				$this->storeUser($facebookUserProfile);
 				$this->loginUser($user);
 			} catch (FacebookApiException $e) {
@@ -84,12 +84,12 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 			  	$user = null;
 			}
 		}
-		// || (!$user)
+        
 		if($this->piVars['fbLogout'] == "1") {
 			$GLOBALS['TSFE']->fe_user->logoff();
             setcookie("fe_typo_user", "", time() - 3600, "/", $_SERVER["HTTP_HOST"]);
             
-			if(isset($this->conf['redirectAfterLogoutPid'])){
+			if(isset($this->conf['redirectAfterLogoutPid']) && ($this->conf['redirectAfterLogoutPid'] != 0)) {
 				$redirectAfterLogoutUrl = $this->pi_getPageLink($this->conf['redirectAfterLogoutPid']);
 				header('Location: '.$redirectAfterLogoutUrl);
 				exit;
@@ -113,7 +113,6 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		
 		// If user is logged in and JavaScript detects that user should be logged out (because he/she is logged out of facebook) -> redirect to logout Url.
 		$immedeateLogout = '';
-		
 		
 		$additionalInitializationCode = '';
 		if ($GLOBALS['TSFE']->fe_user->user) {
@@ -201,7 +200,7 @@ FACEBOOKJSSDK;
             $GLOBALS["TSFE"]->loginUser = 1;
             $GLOBALS["TSFE"]->initUserGroups(); // this is needed in case the redirection is to a restricted page.
             
-			if(isset($this->conf['redirectAfterLoginPid'])){
+			if(isset($this->conf['redirectAfterLoginPid']) && ($this->conf['redirectAfterLoginPid'] != 0)){
 				$redirectAfterLoginUrl = $this->pi_getPageLink($this->conf['redirectAfterLoginPid']);
 				header('Location: '.$redirectAfterLoginUrl);
 				exit;
@@ -218,9 +217,8 @@ FACEBOOKJSSDK;
         global $TYPO3_DB;
         
         $this->fe_usersValues['pid'] = $this->conf['usersPid'];
-        $username = uniqid($this->extKey . $facebookUserProfile['id'] . '.');
         // username should be a unique, random string that should never be used with any registration
-        //if($)
+        $username = 'facebook' . $facebookUserProfile['id'] . '.' . t3lib_div::getRandomHexString(12);
         
         // ??? check if usergroup is the one we're using
         
@@ -271,11 +269,17 @@ FACEBOOKJSSDK;
 			/*
 			 * TODO: Zeitintervall, wann upgedatet wird (bzw. nur dann updaten wenn der Facebook-User upgedatet wurde)
 			 */
-        	if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
-				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
-        	}
-        	
-			$TYPO3_DB->exec_UPDATEquery($this->tableName, $where, $fe_usersValues);
+            
+            /* simple compare if the current user value isn't the same than the current value from facebook
+             * if true: update the user
+             */
+            if($user['tx_ajadofacebook_updated_time'] != $facebookUserProfile['updated_time']) {
+                $fe_usersValues['tx_ajadofacebook_updated_time'] = $facebookUserProfile['updated_time'];
+                if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
+                    $fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
+                }
+                $TYPO3_DB->exec_UPDATEquery($this->tableName, $where, $fe_usersValues);
+            }
         }
         else {
         	$fe_usersValues['tx_ajadofacebook_id'] = $facebookUserProfile['id'];
@@ -283,7 +287,7 @@ FACEBOOKJSSDK;
 				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
         	}
 			$fe_usersValues['usergroup'] = $this->conf['userGroup'];
-            $fe_usersValues['password'] = t3lib_div::getRandomHexString();
+            $fe_usersValues['password'] = t3lib_div::getRandomHexString(32);
             $fe_usersValues['crdate'] = time();
             $TYPO3_DB->exec_INSERTquery($this->tableName, $fe_usersValues);
         }
@@ -343,7 +347,7 @@ FACEBOOKJSSDK;
    *
    * @return string The current URL
    */
-  protected function getCurrentUrl($additionalParams = array()) {
+  /*protected function getCurrentUrl($additionalParams = array()) {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
       ? 'https://'
       : 'http://';
@@ -375,7 +379,7 @@ FACEBOOKJSSDK;
 
     // rebuild
     return $protocol . $parts['host'] . $port . $parts['path'] . $query;
-  }
+  }*/
 
   /**
    * Returns true if and only if the key or key/value pair should
@@ -388,7 +392,7 @@ FACEBOOKJSSDK;
    *
    * @return boolean
    */
-  protected function shouldRetainParam($param) {
+  /*protected function shouldRetainParam($param) {
     foreach (self::$DROP_QUERY_PARAMS as $drop_query_param) {
       if (strpos($param, $drop_query_param.'=') === 0) {
         return false;
@@ -396,7 +400,7 @@ FACEBOOKJSSDK;
     }
 
     return true;
-  }
+  }*/
 }
 
 
