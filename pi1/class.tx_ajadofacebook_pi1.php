@@ -65,9 +65,10 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		$this->pi_setPiVarDefaults();
 		$this->pi_loadLL();
 		$this->pi_USER_INT_obj = 1;	// Configuring so caching is not expected. This value means that no cHash params are ever set. We do this, because it's a USER_INT object!
-	
-		// Create application instance
-		$facebook = new Facebook(array(
+        
+        $this->checkPrerequisites();
+        
+        $facebook = new Facebook(array(
 			'appId' => $this->conf['appId'],
 			'secret' => $this->conf['secret']
 		));
@@ -76,7 +77,6 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		if(($this->piVars['fbLogin'] == "1") && $user) {
 			try {
 				$facebookUserProfile = $facebook->api('/me');
-				// todo was ist wenn ich es nicht zurück bekomme?
 				$this->storeUser($facebookUserProfile);
 				$this->loginUser($user);
 			} catch (FacebookApiException $e) {
@@ -188,7 +188,6 @@ FACEBOOKJSSDK;
         $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', '');
         if ($userToLogin = $TYPO3_DB->sql_fetch_assoc($result))
         {
-        	/* @var $fe_user tslib_feUserAuth */
             $feUser = $GLOBALS['TSFE']->fe_user;
             unset($feUser->user);
             if($this->conf['makeSessionPermanent']) {
@@ -222,11 +221,21 @@ FACEBOOKJSSDK;
         
         // ??? check if usergroup is the one we're using
         
-        $where = "(tx_ajadofacebook_id=" .
-                 $TYPO3_DB->fullQuoteStr($facebookUserProfile['id'], $this->tableName) .
-                 ") AND deleted=0";
+        $where = "tx_ajadofacebook_id=" . $TYPO3_DB->fullQuoteStr($facebookUserProfile['id'], $this->tableName) .
+                 " AND deleted=0";
         
-        $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', '');
+        $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', 1);
+        
+        $userFound = ($TYPO3_DB->sql_num_rows($result) > 0)?true:false;
+        
+        if($userFound) {
+            $user = $TYPO3_DB->sql_fetch_assoc($result);
+            
+            if($user['tx_ajadofacebook_updated_time'] == $facebookUserProfile['updated_time']) {
+                /* no update needed since facebook profile was not updated */
+                return;
+            }
+        }
         
         $fe_usersValues['tstamp'] = time();
         $fe_usersValues['first_name'] = $facebookUserProfile['first_name'];
@@ -236,17 +245,10 @@ FACEBOOKJSSDK;
         $fe_usersValues['tx_ajadofacebook_link'] = $facebookUserProfile['link'];
         $fe_usersValues['name'] = $facebookUserProfile['name'];
         
-        /* from http://developers.facebook.com/docs/internationalization/
-         * The basic format is ''ll_CC'', where ''ll'' is a two-letter language code,
-         * and ''CC'' is a two-letter country code. For instance, 'en_US' represents US English.
-         * There are two exceptions that do not follow the ISO standard: ar_AR and es_LA.
-         * We use these to denote umbrella locales for Arabic and Spanish, despite
-         * in the latter case having a few more specialized localizations of Spanish.
-         */
         if(isset($facebookUserProfile['locale'])) {
        		$languageAndCountry = explode('_', $facebookUserProfile['locale']);
        		if(isset($languageAndCountry[0])) {
-        		$fe_usersValues['language'] = $languageAndCountry[0];
+        		$fe_usersValues['tx_ajadofacebook_locale'] = $languageAndCountry[0];
        		}
         }
         if(isset($facebookUserProfile['gender'])) {
@@ -256,56 +258,34 @@ FACEBOOKJSSDK;
 		if($this->conf['askForEmail'] && isset($facebookUserProfile['email'])) {
         	$fe_usersValues['tx_ajadofacebook_email'] = $facebookUserProfile['email'];
 		}
-        // $fe_usersValues['tx_ajadofacebook_email']
+        
         $fe_usersValues['pid'] = $this->conf['usersPid'];
         
-        if ($TYPO3_DB->sql_num_rows($result) > 0)
-        {
-			$user = $TYPO3_DB->sql_fetch_assoc($result);
-				// if updating usergroup: don't overwrite it since another extension could set it???
-				//if(!$user['usergroup']){ // only override if user is not already in some group, could be set from another extension
-				//$this->fe_usersValues['usergroup'] = $this->conf['userGroup'];
-			
-			/*
-			 * TODO: Zeitintervall, wann upgedatet wird (bzw. nur dann updaten wenn der Facebook-User upgedatet wurde)
-			 */
-            
-            /* simple compare if the current user value isn't the same than the current value from facebook
-             * if true: update the user
-             */
-            if($user['tx_ajadofacebook_updated_time'] != $facebookUserProfile['updated_time']) {
-                $fe_usersValues['tx_ajadofacebook_updated_time'] = $facebookUserProfile['updated_time'];
-                if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
-                    $fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
-                }
-                $TYPO3_DB->exec_UPDATEquery($this->tableName, $where, $fe_usersValues);
-            }
+        if($this->conf['copyFacebookImageToImageDir']==1) {
+            $fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
+        }
+        $fe_usersValues['tx_ajadofacebook_updated_time'] = $facebookUserProfile['updated_time'];
+        
+        if($userFound) {
+            $updateWhere = "uid=" . $user['uid'];
+            $TYPO3_DB->exec_UPDATEquery($this->tableName, $updateWhere, $fe_usersValues);
         }
         else {
         	$fe_usersValues['tx_ajadofacebook_id'] = $facebookUserProfile['id'];
-        	if($this->conf['copyFacebookImageToSrfeuserFolder']==1) {
-				$fe_usersValues['image'] = $this->copyImageFromFacebook($facebookUserProfile['id']);
-        	}
-			$fe_usersValues['usergroup'] = $this->conf['userGroup'];
+        	$fe_usersValues['usergroup'] = $this->conf['userGroup'];
             $fe_usersValues['password'] = t3lib_div::getRandomHexString(32);
             $fe_usersValues['crdate'] = time();
             $TYPO3_DB->exec_INSERTquery($this->tableName, $fe_usersValues);
         }
     }
     
-	private function copyImageFromFacebook($facebookUserId){
-		// e.g. http://graph.facebook.com/1666900615/picture&type=large
-		$this->conf['imageDir'] = 'uploads/tx_srfeuserregister';
+	private function copyImageFromFacebook($facebookUserId) {
+        // TODO: check if file name unique
 		$imageUrl = "http://graph.facebook.com/$facebookUserId/picture&type=large";
-		$fileName = $facebookUserId.'.jpg';
-		$ch = curl_init($imageUrl);
-		$fp = fopen(PATH_site.$this->conf['imageDir'].'/'.$fileName, 'wb');
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_exec($ch);
-		curl_close($ch);
-		fclose($fp);
+		$fileName = 'facebook'.t3lib_div::getRandomHexString(16).'.jpg';
+        $tempRawImageSource = t3lib_div::getURL($imageUrl);
+        t3lib_div::writeFile(PATH_site.$this->conf['imageDir'].$fileName,$tempRawImageSource);
+        
 		return $fileName;
 	}
     
@@ -314,31 +294,17 @@ FACEBOOKJSSDK;
      */
     function checkPrerequisites()
     {
-        /*if (!function_exists('curl_init'))
-        {
-            throw new Exception('Ext facebook2t3: libcurl package for PHP is needed.');
-        }
-        if (!function_exists('json_decode'))
-        {
-            throw new Exception('Ext facebook2t3: JSON PHP extension is needed.');
-        }
+        
+        if(($this->conf['copyFacebookImageToImageDir']==1) && !is_dir(PATH_site.$this->conf['imageDir'])) {
 
-        $countFf4P = count($this->facebookFields4Perms);
-        $countFf4F = count($this->facebookFields4Fetch);
-        $countF_uF = count($this->fe_usersFields);
-        if ($countFf4P != $countFf4F || $countFf4F != $countF_uF)
-        {
-            throw new Exception('Ext facebook2t3: constants "facebookFields4Perms", "facebookFields4Fetch" & "fe_usersFields" need to have the same number of elements!');
+            throw new Exception('Ext ajado_facebook: Upload directory doesn\'t exist!');
         }
-
-        if (!isset($this->conf['appId']) || $this->conf['appId'] == '')
-        {
-            throw new Exception('Ext facebook2t3: Facebook app id is not set in constants');
+        if (!isset($this->conf['appId']) || $this->conf['appId'] == '') {
+            throw new Exception('Ext ajado_facebook: Facebook app id is not set in constants');
         }
-        if (!isset($this->conf['secret']) || $this->conf['secret'] == '')
-        {
-            throw new Exception('Ext facebook2t3: Facebook secret is not set in constants');
-        }*/
+        if (!isset($this->conf['secret']) || $this->conf['secret'] == '') {
+            throw new Exception('Ext ajado_facebook: Facebook secret is not set in constants');
+        }
     }
     
   /**

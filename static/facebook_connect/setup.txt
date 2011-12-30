@@ -21,7 +21,8 @@ plugin.tx_ajadofacebook_pi1 {
     
     logoutButton=HTML
     logoutButton.value=<a href="javascript:fbLogout();" class="fb_button fb_button_medium"><span class="fb_button_text">Logout</span></a>
-	copyFacebookImageToSrfeuserFolder = 0
+	copyFacebookImageToImageDir = 0
+    imageDir=uploads/tx_srfeuserregister/
 }
 
 # Include Facebook xmlns in html-tag
