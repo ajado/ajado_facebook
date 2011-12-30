@@ -74,6 +74,7 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		));
 		
 		$user = $facebook->getUser();
+        
 		if(($this->piVars['fbLogin'] == "1") && $user) {
 			try {
 				$facebookUserProfile = $facebook->api('/me');
@@ -108,6 +109,7 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		$reloadUrlLogin = $this->pi_getPageLink($GLOBALS['TSFE']->id,'',array($this->prefixId . '[fbLogin]' => "1"));
 		$reloadUrlLogout = $this->pi_getPageLink($GLOBALS['TSFE']->id,'',array($this->prefixId . '[fbLogout]' => "1"));
 		
+        // TODO: Instead of HTML Code this should be IMAGE objects
 		$loginButton = $this->cObj->cObjGetSingle($this->conf['loginButton'], $this->conf['loginButton.']);
 		$logoutButton = $this->cObj->cObjGetSingle($this->conf['logoutButton'], $this->conf['logoutButton.']);
 		
@@ -223,7 +225,9 @@ FACEBOOKJSSDK;
         
         $where = "tx_ajadofacebook_id=" . $TYPO3_DB->fullQuoteStr($facebookUserProfile['id'], $this->tableName) .
                  " AND deleted=0";
-        
+        /*
+         * TODO: this call is redundand since it's also done in loginUser()
+         */
         $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', 1);
         
         $userFound = ($TYPO3_DB->sql_num_rows($result) > 0)?true:false;

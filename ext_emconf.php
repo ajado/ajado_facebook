@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Ajado Facebook Connect',
-	'description' => 'Facebook Connect via OAuth 2.0. Integrates with sr_feuser_register. http://www.ajado.com/blog/presentation-facebook-connect/',
+	'description' => 'Facebook Connect via OAuth 2.0, works together with sr_feuser_register. Introduction: http://www.ajado.com/blog/presentation-facebook-connect/',
 	'category' => 'plugin',
 	'shy' => 0,
 	'version' => '0.2.2',
