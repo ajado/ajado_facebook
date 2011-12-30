@@ -185,7 +185,7 @@ FACEBOOKJSSDK;
         $where = 'tx_ajadofacebook_id=' . $TYPO3_DB->fullQuoteStr($facebookId, $this->tableName) . 
         		 ' AND deleted=0';
 		
-        $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', '');
+        $result = $TYPO3_DB->exec_SELECTquery('*', $this->tableName, $where, '', '', 1);
         if ($userToLogin = $TYPO3_DB->sql_fetch_assoc($result))
         {
             $feUser = $GLOBALS['TSFE']->fe_user;
@@ -246,11 +246,9 @@ FACEBOOKJSSDK;
         $fe_usersValues['name'] = $facebookUserProfile['name'];
         
         if(isset($facebookUserProfile['locale'])) {
-       		$languageAndCountry = explode('_', $facebookUserProfile['locale']);
-       		if(isset($languageAndCountry[0])) {
-        		$fe_usersValues['tx_ajadofacebook_locale'] = $languageAndCountry[0];
-       		}
+            $fe_usersValues['tx_ajadofacebook_locale'] = $facebookUserProfile['locale'];
         }
+        
         if(isset($facebookUserProfile['gender'])) {
         	$fe_usersValues['tx_ajadofacebook_gender'] = $facebookUserProfile['gender'];
         }
@@ -294,9 +292,7 @@ FACEBOOKJSSDK;
      */
     function checkPrerequisites()
     {
-        
         if(($this->conf['copyFacebookImageToImageDir']==1) && !is_dir(PATH_site.$this->conf['imageDir'])) {
-
             throw new Exception('Ext ajado_facebook: Upload directory doesn\'t exist!');
         }
         if (!isset($this->conf['appId']) || $this->conf['appId'] == '') {
