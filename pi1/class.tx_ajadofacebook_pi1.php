@@ -92,7 +92,14 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
             
 			if(isset($this->conf['redirectAfterLogoutPid']) && ($this->conf['redirectAfterLogoutPid'] != 0)) {
 				$redirectAfterLogoutUrl = $this->pi_getPageLink($this->conf['redirectAfterLogoutPid']);
-				header('Location: '.$redirectAfterLogoutUrl);
+                
+				if(isset($GLOBALS['TSFE']->baseUrl)) {
+					header('Location: '.$GLOBALS['TSFE']->baseUrl.$redirectAfterLogoutUrl);
+				}
+				else {
+					header('Location: '.$redirectAfterLogoutUrl);
+				}
+                
 				exit;
 			}
         }
@@ -109,6 +116,11 @@ class tx_ajadofacebook_pi1 extends tslib_pibase {
 		$reloadUrlLogin = $this->pi_getPageLink($GLOBALS['TSFE']->id,'',array($this->prefixId . '[fbLogin]' => "1"));
 		$reloadUrlLogout = $this->pi_getPageLink($GLOBALS['TSFE']->id,'',array($this->prefixId . '[fbLogout]' => "1"));
 		
+        if(isset($GLOBALS['TSFE']->baseUrl)) {
+			$reloadUrlLogin = $GLOBALS['TSFE']->baseUrl . $reloadUrlLogin;
+			$reloadUrlLogout = $GLOBALS['TSFE']->baseUrl . $reloadUrlLogout;
+		}
+        
         // TODO: Instead of HTML Code this should be IMAGE objects
 		$loginButton = $this->cObj->cObjGetSingle($this->conf['loginButton'], $this->conf['loginButton.']);
 		$logoutButton = $this->cObj->cObjGetSingle($this->conf['logoutButton'], $this->conf['logoutButton.']);
@@ -203,7 +215,12 @@ FACEBOOKJSSDK;
             
 			if(isset($this->conf['redirectAfterLoginPid']) && ($this->conf['redirectAfterLoginPid'] != 0)){
 				$redirectAfterLoginUrl = $this->pi_getPageLink($this->conf['redirectAfterLoginPid']);
-				header('Location: '.$redirectAfterLoginUrl);
+                if(isset($GLOBALS['TSFE']->baseUrl)) {
+					header('Location: '.$GLOBALS['TSFE']->baseUrl.$redirectAfterLoginUrl);
+				}
+				else {
+					header('Location: '.$redirectAfterLoginUrl);
+				}
 				exit;
 			}
         }
